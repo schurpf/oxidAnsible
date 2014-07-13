@@ -1,0 +1,4 @@
+---
+# vars file for mysql
+mysql_user_name: vagrant
+mysql_user_password: vagrant

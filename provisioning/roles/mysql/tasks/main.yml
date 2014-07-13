@@ -1,0 +1,21 @@
+---
+- name: Install Python Mysqldb
+  apt: name=python-mysqldb state=latest update_cache=yes cache_valid_time=300
+
+- name: Install Mysql-Server Package
+  apt: name=mysql-server state=latest update_cache=yes cache_valid_time=300
+
+- service: name=mysql state=started
+
+- name: Install Mysql-Client Package
+  apt: name=mysql-client state=latest update_cache=yes cache_valid_time=300
+
+- name: Creating User [{{ mysql_user_name }}] with Password [{{ mysql_user_password }}]
+  mysql_user: name={{ mysql_user_name }} password={{ mysql_user_password }} priv=*.*:ALL,GRANT state=present
+
+- name: Storing Login information in file ~/.my.cnf
+  template: src=my.cnf dest=/home/vagrant/.my.cnf owner=vagrant group=vagrant
+
+- name: Create Database
+  mysql_db: name=oxid state=present
+

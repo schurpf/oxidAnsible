@@ -1,0 +1,6 @@
+---
+# vars file for phpmyadmin
+
+phpmyadmin_version: 4.2.5
+phpmyadmin_folder: /home/vagrant/phpmyadmin
+apache_serveradmin: webmaster@localhost

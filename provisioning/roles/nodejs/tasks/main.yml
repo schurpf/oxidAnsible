@@ -1,0 +1,18 @@
+---
+- name: Installing python-software-properties
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=300
+  with_items:
+    - python-software-properties
+    - python-apt
+
+- name: Adding repository
+  apt_repository: repo='ppa:chris-lea/node.js' state=present
+
+- name: Install NodeJS
+  apt: name=nodejs update_cache=yes
+
+- name: Install Bower
+  npm: name=bower global=yes state=latest
+
+- name: Install Grunt
+  npm: name=grunt-cli global=yes state=latest

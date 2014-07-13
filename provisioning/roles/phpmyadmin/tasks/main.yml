@@ -1,0 +1,24 @@
+---
+- name: install additional php packages
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=300
+  with_items:
+    - php5-mysql
+    - php5-mcrypt
+    - php5-gd
+
+- name: download the source tarball
+  get_url: url=http://files.directadmin.com/services/all/phpMyAdmin/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz
+           dest=/tmp/phpmyadmin-{{ phpmyadmin_version }}.tar.gz
+
+- name: create folder {{ phpmyadmin_folder }}
+  file: path={{ phpmyadmin_folder }} state=directory owner=vagrant group=vagrant
+
+- name: unpack the source tarball
+  command: /bin/tar -xzf /tmp/phpmyadmin-{{ phpmyadmin_version }}.tar.gz -C {{ phpmyadmin_folder }}
+
+- name: Create symlink to current
+  file: src={{ phpmyadmin_folder }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages dest={{ phpmyadmin_folder }}/current state=link force=yes
+
+- name: Copy default vhost config
+  template: src=default dest=/etc/apache2/sites-available/default mode=0644 owner=root group=root
+  notify: Restart Apache

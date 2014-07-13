@@ -1,0 +1,12 @@
+#http://download.oxid-esales.com/ce/index.php
+---
+- hosts: all
+  sudo: yes
+  roles:
+    #- common
+    #- apache
+    #- php
+    #- mysql
+    #- oxid
+    #- phpmyadmin
+    - nodejs

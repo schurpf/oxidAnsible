@@ -1,0 +1,3 @@
+---
+# vars file for oxid
+oxid_root: /vagrant/web

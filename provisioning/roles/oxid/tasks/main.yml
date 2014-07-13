@@ -1,0 +1,26 @@
+---
+# tasks file for oxid
+- name: Install Git
+  apt: name=git state=latest update_cache=yes cache_valid_time=300
+
+- stat: path={{ oxid_root }}/source
+  register: p
+
+- name: Cloning Git Repo to {{ oxid_root }}
+  git: repo=https://github.com/OXID-eSales/oxideshop_ce.git dest={{ oxid_root }}
+  when: p.stat.isdir is defined and p.stat.isdir == false
+
+- name: Changing Directory Rights
+  file: path={{ oxid_root }}/source/{{ item }} mode=0777 recurse=yes state=directory owner=vagrant group=www-data
+  with_items:
+    - out/pictures
+    - out/media
+    - log
+    - tmp
+    - export
+
+- name: Changing file Rights
+  file: path={{ oxid_root }}/source/{{ item }} mode=0777 owner=vagrant group=www-data
+  with_items:
+    - .htaccess
+    - config.inc.php

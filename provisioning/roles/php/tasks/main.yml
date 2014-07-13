@@ -1,0 +1,11 @@
+---
+# tasks file for php
+- name: Install PHP
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=300
+  with_items:
+    - php5
+    - php5-json
+    - php5-mysql
+    - php-mdb2-driver-mysql
+    - php5-gd
+    - php5-curl
