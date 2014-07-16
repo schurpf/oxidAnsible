@@ -1,0 +1,3 @@
+---
+php_safe_mode: Off
+php_expose_php: On

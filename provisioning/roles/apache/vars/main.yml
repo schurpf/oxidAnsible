@@ -1,3 +1,6 @@
 ---
 # vars file for apache
-oxid_root: /vagrant/web
+apache_web_root: /var/www
+apache_user: www-data
+apache_allow_override: All
+apache_server_admin: webmaster@localhost

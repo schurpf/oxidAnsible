@@ -1,16 +1,18 @@
 <VirtualHost *:80>
-	ServerAdmin webmaster@localhost
+	ServerAdmin {{ apache_server_admin }}
 
-	DocumentRoot /var/www
+	DocumentRoot {{ apache_web_root }}
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride All
+		Require all granted
 	</Directory>
-	<Directory /var/www/>
+	<Directory {{ apache_web_root }}>
 		Options Indexes FollowSymLinks MultiViews
-		AllowOverride All
+		AllowOverride {{ apache_allow_override }}
 		Order allow,deny
 		allow from all
+		Require all granted
 	</Directory>
 
 	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/

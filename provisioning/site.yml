@@ -2,11 +2,17 @@
 ---
 - hosts: all
   sudo: yes
+  vars:
+    - apache_web_root: /vagrant/web
+    - mysql_user_name: vagrant
+    - mysql_user_name: vagrant
+    - mysql_root_password: root
+
   roles:
-    #- common
-    #- apache
-    #- php
-    #- mysql
-    #- oxid
-    #- phpmyadmin
+    - common
+    - mysql
+    - apache
+    - php
+    - oxid
+    - phpmyadmin
     - nodejs

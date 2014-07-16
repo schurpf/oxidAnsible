@@ -1,17 +1,18 @@
 ---
-# tasks file for oxid
-- name: Install Git
-  apt: name=git state=latest update_cache=yes cache_valid_time=300
+- name: Install Unzip
+  apt: name=unzip state=latest update_cache=yes cache_valid_time=3600
 
-- stat: path={{ oxid_root }}/source
+- stat: path={{ oxid_root }}
   register: p
 
-- name: Cloning Git Repo to {{ oxid_root }}
-  git: repo=https://github.com/OXID-eSales/oxideshop_ce.git dest={{ oxid_root }}
-  when: p.stat.isdir is defined and p.stat.isdir == false
+- name: copy Oxid files to {{ oxid_root }}
+  unarchive: src=OXID_ESHOP_CE_4.8.6.zip dest={{ oxid_root }} creates={{ oxid_root }}/application
 
-- name: Changing Directory Rights
-  file: path={{ oxid_root }}/source/{{ item }} mode=0777 recurse=yes state=directory owner=vagrant group=www-data
+- name: Remove Exception log
+  file: path={{ oxid_root }}/log/EXCEPTION_LOG.txt state=touch owner=www-data group=www-data mode=0777
+
+- name: Changing Directory Rights {{ apache_user }}:{{ apache_user }}
+  file: path={{ oxid_root }}/{{ item }} mode=0777 recurse=yes state=directory owner={{ apache_user }} group={{ apache_user }}
   with_items:
     - out/pictures
     - out/media
@@ -19,8 +20,20 @@
     - tmp
     - export
 
-- name: Changing file Rights
-  file: path={{ oxid_root }}/source/{{ item }} mode=0777 owner=vagrant group=www-data
+- name: Changing file Rights to {{ apache_user }}:{{ apache_user }}
+  file: path={{ oxid_root }}/{{ item }} mode=0777 owner={{ apache_user }} group={{ apache_user }}
   with_items:
     - .htaccess
     - config.inc.php
+
+- name: Copy database dump to server
+  copy: src=oxid_dump.sql dest=/tmp/oxid_dump.sql
+
+#- name: Create database {{ oxid_database_name }}
+#  mysql_db: name={{ oxid_database_name }} state=import target=/tmp/oxid_dump.sql
+
+#- name: Copy oxid config file (config.inc.php)
+#  template: src=config.inc.php dest={{ oxid_root }}/config.inc.php
+
+- name: Remove setup directory
+  file: name={{ oxid_root }}/setup state=absent

@@ -1,16 +1,17 @@
 <VirtualHost *:80>
-	ServerAdmin {{ apache_serveradmin }}
+	ServerAdmin {{ apache_server_admin }}
 
-	DocumentRoot /var/www
+	DocumentRoot {{ apache_web_root }}
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride All
 	</Directory>
-	<Directory /var/www/>
+	<Directory {{ apache_web_root }}>
 		Options Indexes FollowSymLinks MultiViews
-		AllowOverride All
+		AllowOverride {{ apache_allow_override }}
 		Order allow,deny
 		allow from all
+		Require all granted
 	</Directory>
 
 	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
@@ -29,8 +30,8 @@
 
 	CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-	Alias /phpMyAdmin "{{ phpmyadmin_folder }}/current"
-	<Directory "{{ phpmyadmin_folder }}/current">
+	Alias /phpMyAdmin "/home/vagrant/phpmyadmin/current"
+	<Directory "/home/vagrant/phpmyadmin/current">
         Options Indexes MultiViews FollowSymLinks
         AllowOverride All
 	</Directory>

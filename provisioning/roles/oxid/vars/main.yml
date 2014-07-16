@@ -1,3 +1,11 @@
 ---
-# vars file for oxid
-oxid_root: /vagrant/web
+apache_web_root: /vagrant/web
+
+# Path where oxid is deployed
+oxid_root: "{{ apache_web_root }}"
+oxid_tmp_path: "/tmp"
+
+apache_user: www-data
+oxid_database_name: oxid
+oxid_idebug: 1
+oxid_iutfmode: 1

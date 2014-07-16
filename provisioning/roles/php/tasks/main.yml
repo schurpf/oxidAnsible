@@ -1,7 +1,11 @@
 ---
 # tasks file for php
+- name: Add php 5.5 repo for Ubuntu 12.04
+  apt_repository: repo=ppa:ondrej/php5
+  when: ansible_distribution_version == '12.04' and ansible_distribution == 'Ubuntu'
+
 - name: Install PHP
-  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=300
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
   with_items:
     - php5
     - php5-json
@@ -9,3 +13,9 @@
     - php-mdb2-driver-mysql
     - php5-gd
     - php5-curl
+    - curl
+
+- name: Install composer
+  shell:
+    curl -sS https://getcomposer.org/installer | /usr/bin/php && /bin/mv -f /home/vagrant/composer.phar /usr/local/bin/composer
+    creates=/usr/local/bin/composer

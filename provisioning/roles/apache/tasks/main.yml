@@ -1,22 +1,22 @@
 ---
 # tasks file for apache
 - name: Install Apache
-  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=300
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
   with_items:
     - apache2
 
-- stat: path=/var/www
-  register: p
+#- stat: path=/var/www
+  #register: p
 
-- name: remove apache root Folder
-  file: path=/var/www state=absent
-  when: p.stat.isdir is defined and p.stat.isdir == true
+#- name: remove apache root Folder
+  #file: path=/var/www state=absent
+  #when: p.stat.isdir is defined and p.stat.isdir == true
 
 - name: Create Web Directory
-  file: path={{ oxid_root }} state=directory
+  file: path={{ apache_web_root }} state=directory
 
-- name: Link Vagrant folder to apache root
-  file: src={{ oxid_root }}/source dest=/var/www state=link force=yes
+#- name: Link Vagrant folder to apache root
+  #file: src={{ apache_web_root }} dest=/var/www state=link force=yes
 
 - name: Copy default vhost config
   template: src=default dest=/etc/apache2/sites-available/default mode=0644 owner=root group=root
@@ -26,4 +26,7 @@
   apache2_module: name=rewrite state=present
 
 - name: Add Apache user to vagrant group
-  user: name=www-data groups=vagrant,www-data
+  user: name={{ apache_user }} groups=vagrant,{{ apache_user }}
+
+- name: Add Vagrant user to vagrant group
+  user: name=vagrant groups=vagrant,{{ apache_user }}

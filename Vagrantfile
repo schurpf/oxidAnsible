@@ -6,8 +6,19 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provider "virtualbox" do |v|
       v.memory = 1024
-      v.cpus = 2
+      v.cpus = 4
     end
+
+    config.vm.synced_folder ".", "/vagrant",
+        owner: 'vagrant',
+        group: 'vagrant',
+        mount_options: ["dmode=777,fmode=777"]
+
+    config.vm.synced_folder "./web", "/var/www",
+        owner: 'www-data',
+        group: 'vagrant',
+        mount_options: ["dmode=777,fmode=777"]
+
 
     config.vm.box = "precise32"
     config.vm.box_url = "http://files.vagrantup.com/precise32.box"
