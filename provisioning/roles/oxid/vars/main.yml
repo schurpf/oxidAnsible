@@ -1,7 +1,6 @@
 ---
 apache_web_root: /vagrant/web
 
-# Path where oxid is deployed
 oxid_root: "{{ apache_web_root }}"
 oxid_tmp_path: "/tmp"
 

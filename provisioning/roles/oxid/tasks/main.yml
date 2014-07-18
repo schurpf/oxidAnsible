@@ -2,18 +2,22 @@
 - name: Install Unzip
   apt: name=unzip state=latest update_cache=yes cache_valid_time=3600
 
-- stat: path={{ oxid_root }}
+- name: Checking directory {{ oxid_root }}/application
+  stat: path={{ oxid_root }}/application
   register: p
 
-- name: copy Oxid files to {{ oxid_root }}
-  unarchive: src=OXID_ESHOP_CE_4.8.6.zip dest={{ oxid_root }} creates={{ oxid_root }}/application
+- name: Download latest Oxid
+  get_url: url=http://download.oxid-esales.com/ce/index.php dest=/tmp/oxid.zip owner=vagrant group=vagrant
+  when: p.stat.isdir is not defined
 
-- name: Remove Exception log
-  file: path={{ oxid_root }}/log/EXCEPTION_LOG.txt state=touch owner=www-data group=www-data mode=0777
+- name: Extract oxid
+  command: /usr/bin/unzip -o /tmp/oxid.zip -d {{ apache_web_root }}
+  when: p.stat.isdir is not defined
 
 - name: Changing Directory Rights {{ apache_user }}:{{ apache_user }}
   file: path={{ oxid_root }}/{{ item }} mode=0777 recurse=yes state=directory owner={{ apache_user }} group={{ apache_user }}
   with_items:
+    - "{{ oxid_root }}"
     - out/pictures
     - out/media
     - log
@@ -21,19 +25,25 @@
     - export
 
 - name: Changing file Rights to {{ apache_user }}:{{ apache_user }}
-  file: path={{ oxid_root }}/{{ item }} mode=0777 owner={{ apache_user }} group={{ apache_user }}
+  file: path={{ oxid_root }}/{{ item }} mode=0440 owner={{ apache_user }} group={{ apache_user }}
   with_items:
     - .htaccess
     - config.inc.php
 
 - name: Copy database dump to server
-  copy: src=oxid_dump.sql dest=/tmp/oxid_dump.sql
+  copy: src=oxid.sql dest=/tmp/oxid.sql mode=0777 owner=vagrant group=vagrant
 
-#- name: Create database {{ oxid_database_name }}
-#  mysql_db: name={{ oxid_database_name }} state=import target=/tmp/oxid_dump.sql
+- name: Create database {{ oxid_database_name }}
+  mysql_db: name={{ oxid_database_name }} state=present
 
-#- name: Copy oxid config file (config.inc.php)
-#  template: src=config.inc.php dest={{ oxid_root }}/config.inc.php
+- name: Import data into database {{ oxid_database_name }}
+  mysql_db: name={{ oxid_database_name }} state=import target=/tmp/oxid.sql
+
+- name: Copy oxid config file (config.inc.php)
+  template: src=config.inc.php dest={{ oxid_root }}/config.inc.php
 
 - name: Remove setup directory
   file: name={{ oxid_root }}/setup state=absent
+
+- name: Remove Exception log
+  file: path={{ oxid_root }}/log/EXCEPTION_LOG.txt state=touch owner={{ apache_user }} group={{ apache_user }} mode=0777

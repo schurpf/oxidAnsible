@@ -22,16 +22,26 @@
     - localhost
 
 - name: Storing root login information in /root/.my.cnf
-  action: template src=root_conf.cnf dest=/root/.my.cnf
+  action: template src=root_conf.cnf dest=/root/.my.cnf mode=0600
 
-- name: Storing Login information in file ~/.my.cnf
-  template: src=my.cnf dest=/home/vagrant/.my.cnf owner=vagrant group=vagrant
+
+- name: delete anonymous MySQL server user for $server_hostname
+  action: mysql_user user="" host="$server_hostname" state="absent"
+
+- name: delete anonymous MySQL server user for localhost
+  action: mysql_user user="" state="absent"
+
+- name: remove the MySQL test database
+  action: mysql_db db=test state=absent
+
+#- name: Storing Login information in file ~/.my.cnf
+#  template: src=my.cnf dest=/home/vagrant/.my.cnf owner=vagrant group=vagrant
 
 - name: Creating User ({{ mysql_user_name }}) with Password ({{ mysql_user_password }})
   mysql_user: name={{ mysql_user_name }} password={{ mysql_user_password }} priv=*.*:ALL,GRANT state=present host={{ item }}
+  notify: restart mysql
   with_items:
     - "{{ ansible_hostname }}"
     - 127.0.0.1
     - ::1
     - localhost
-

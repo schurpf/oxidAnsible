@@ -1,0 +1,4 @@
+---
+- name: Extract oxid
+  command: /usr/bin/unzip -o /tmp/oxid.zip -d {{ apache_web_root }}
+
