@@ -11,17 +11,17 @@ Default value
 Shop Admin
 ----------
 
-username: vagrant@vagrant.no
-password: vagrant
+    username: vagrant@vagrant.not
+    password: vagrant
 
 MySql
 -----
 
-username: root
-password: root
-
-username: vagrant
-password: vagrant
+    username: root
+    password: root
+    
+    username: vagrant
+    password: vagrant
 
 
 
