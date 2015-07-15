@@ -23,5 +23,9 @@ MySql
     username: vagrant
     password: vagrant
 
+Vagrant box
+-----------
+
+    webroot: /vagrant/web
 
 
